@@ -29,17 +29,20 @@ public class InvertedIndex {
     public void indexString(String id, String text) {
 
         for (String word : text.split("\\W+")) {
-            String normalizedWord = word.toLowerCase();
-            if (stopwords.contains(normalizedWord)) {
-                continue;
-            }
+            var subWords = new SimpleWordSteemer(word.toLowerCase()).parse();
 
-            List<Tuple> idx = index.get(normalizedWord);
-            if (idx == null) {
-                idx = new LinkedList<>();
-                index.put(normalizedWord, idx);
+            for(var subWord : subWords) {
+                if (stopwords.contains(subWord)) {
+                    continue;
+                }
+
+                List<Tuple> idx = index.get(subWord);
+                if (idx == null) {
+                    idx = new LinkedList<>();
+                    index.put(subWord, idx);
+                }
+                idx.add(new Tuple(subWord, id));
             }
-            idx.add(new Tuple(normalizedWord, id));
         }
     }
 
